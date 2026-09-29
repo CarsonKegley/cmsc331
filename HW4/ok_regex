@@ -1,0 +1,61 @@
+#!/afs/umbc.edu/users/c/h/chang/pub/cs331stuff/regexbench/bin/python
+
+import sys
+from regexbench import is_regular
+
+if len(sys.argv) != 2:
+    print(f"Usage: {sys.argv[0]} regex-file", file=sys.stderr)
+    sys.exit(2)
+
+filename = sys.argv[1]
+all_ok = True
+
+try:
+
+    # newline="" preserves the actual line endings so that
+    # we can distinguish Unix LF from DOS/Windows CRLF.
+
+    with open(filename, "r", newline="") as f:
+        for line_number, line in enumerate(f, start=1):
+
+            # Remove only end-of-line characters.
+            # Do not use strip(), since spaces may be part of the regex.
+            regex = line.rstrip("\r\n")
+
+            print(f"Line {line_number}: {regex}")
+
+            # Check for DOS/Windows CRLF line ending.
+            if line.endswith("\r\n"):
+                print("  NO: DOS line ending found!")
+                all_ok = False
+                continue
+
+            # Check for blank lines.
+            if regex == "":
+                print("  NO: blank line")
+                all_ok = False
+                continue
+
+
+            # Course restrictions.
+
+            if any(x in regex for x in ("(?=", "(?!", "(?:", "(?<=", "(?<!")):
+                print("  NO: uses BANNED grouping/lookaround construct")
+                all_ok = False
+                continue
+
+            # Check whether regexbench can analyze the expression.
+            if is_regular(regex):
+                print("  Looks OK")
+            else:
+                print("  NO: expression cannot be processed by the grader")
+                all_ok = False
+
+except OSError as e:
+    print(f"Cannot read {filename}: {e}", file=sys.stderr)
+    sys.exit(2)
+
+if all_ok:
+    sys.exit(0)
+else:
+    sys.exit(1)

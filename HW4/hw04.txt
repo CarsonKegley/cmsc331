@@ -1,0 +1,7 @@
+^([^aeiou]*[aeiou]){3}.*$
+^([^aeiou]*[aeiou]){3}[^aeiou]*$
+^[^aeiou]*[aeiou][^aeiou]*(([^aeiou]*[aeiou][^aeiou]*){2})*$
+^[^yx]*((x.*y)|(y.*x)).*$
+^[^x]*(x+[^xy][^x]*)*x*$
+
+
