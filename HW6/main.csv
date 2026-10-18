@@ -1,0 +1,27 @@
+Parse Stack," Input Stream"," Comment"
+S,( id id * id ) $,Initial Contents
+E $,( id id * id ) $,uses S -> E $
+T Ttl $,( id id * id ) $,use E -> T Ttl," "
+F Ftl Ttl $,( id id * id ) $,use T -> F Ftl
+( E ) Ftl Ttl $,( id id * id ) $,use F -> ( E )
+E ) Ftl Ttl $,id + id * id ) $,Match on (
+T Ttl ) Ftl Ttl $,id + id * id ) $,use E -> T Ttl
+F Ftl Ttl ) Ftl Ttl $,id + id * id ) $,use T -> F Ftl
+id Ftl Ttl ) Ftl Ttl $,id + id * id ) $,use F -> id
+Ftl Ttl ) Ftl Ttl $,+ id * id ) $,match id
+Ttl ) Ftl Ttl $,+ id * id ) $,use Ftl -> epsilon
++ T Ttl) Ftl Ttl $,+ id * id ) $,use Ttl -> + T Ttl
+T Ttl) Ftl Ttl $,id * id ) $,match +
+F Ftl Ttl) Ftl Ttl $,id * id ) $,use T -> F Ftl
+id Ftl Ttl) Ftl Ttl $,id * id ) $,use F -> id
+Ftl Ttl) Ftl Ttl $,* id ) $,match id
+* F Ftl Ttl) Ftl Ttl $,* id ) $,use Ftl -> * F Ftl
+F Ftl Ttl) Ftl Ttl $,id ) $,match *
+id Ftl Ttl) Ftl Ttl $,id ) $,use F -> id
+Ftl Ttl) Ftl Ttl $,) $,match id
+Ttl) Ftl Ttl $,) $,use Ftl -> epsilon
+) Ftl Ttl $,) $,use Ttl -> epsilon
+Ftl Ttl $,$,match )
+Ttl $,$,use Ftl -> epsilon
+$,$,use Ttl -> epsilon
+empty,empty,match )

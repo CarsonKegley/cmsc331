@@ -1,0 +1,1 @@
+[TkId LocalVarId ESclr "x",TkOp ":=",TkSclr 3452700,TkPunc ";",TkId LocalVarId EDllr "y",TkOp ":=",TkDllr 900,TkPunc ";",TkId LocalVarId ESclr "x",TkComp "<=",TkSclr 51000,TkOp "&&",TkId LocalVarId EDllr "y",TkComp ">=",TkDllr 917,TkId LocalVarId ESclr "x",TkComp "==",TkSclr 42000,TkOp "||",TkId LocalVarId EDllr "y",TkComp "!=",TkDllr 723,TkEOF]

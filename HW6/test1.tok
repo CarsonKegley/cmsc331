@@ -1,0 +1,1 @@
+[TkError "all guards failed",TkSclr 30000,TkId LocalVarId ESclr "x",TkComp ">",TkId LocalVarId ESclr "R",TkSclr 30000,TkId LocalVarId ESclr "R",TkError "all guards failed",TkOp "*",TkId LocalVarId ESclr "Rdrop",TkPunc ";",TkEOF]
