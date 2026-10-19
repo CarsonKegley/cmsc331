@@ -38,12 +38,17 @@ lexer str
    |  (_,_,after,[_]) <- ( str =~ "\\A(\\s+)" :: MatchType4 )
    =  lexer after
 
+   -- Add multi character operators
+   |  (_,_,after,[match]) <- ( str =~ "\\A(:=|<=|==|!=|>=|&&|\\|\\|)" :: MatchType4 )
+   =  TkOp match : lexer after
 
    -- Look for punctuation and delimiters
 
-   |  (_,_,after,[match]) <- ( str =~ "\\A([:;])" :: MatchType4 )
+   |  (_,_,after,[match]) <- ( str =~ "\\A([(),:;])" :: MatchType4 )
    =  TkPunc match : lexer after
 
+   |  (_,_,after,[match]) <- ( str =~ "\\A([<>*/+\\-~])" :: MatchType4 )
+   =  TkOp match : lexer after
 
    -- Look for string literals
 
@@ -51,16 +56,57 @@ lexer str
    =  TkStrg match : lexer after
 
 
-   -- Look for integer numbers. \s is white space in PCRE.
+   -- Scalars
+   
+   -- Matching Decimals
+   |  (_,_,after,[match]) <- ( str =~ "\\A([0-9]+\\.[0-9]*)" :: MatchType4 )
+   =  TkSclr (1000 * (read match :: Int) ) : lexer after
 
-   |  (_,_,after,[match]) <- ( str =~ "\\A([0-9]+)\\s" :: MatchType4 )
-   =  TkSclr ( read match :: Int ) : lexer after
+   -- Matching non decimal
+   |  (_,_,after,[match]) <- ( str =~ "\\A([0-9]+)" :: MatchType4 )
+   =  TkSclr (1000 * (read match :: Int) ) : lexer after
 
 
-   -- Everything else is an identifier. \S is non-whitespace in PCRE.
 
-   |  (_,_,after,[match]) <- ( str =~ "\\A(\\S+)" :: MatchType4 ) 
+   -- Identifier Stack need a lot of guards guards for all of the cases
+
+   -- Dollar Ids local and global
+   |  (_,_,after,[match]) <- ( str =~ "\\A([a-zA-Z]+[a-zA-Z0-9]*)\\$" :: MatchType4 ) 
+   =  TkId LocalVarId EDllr match : lexer after
+
+   |  (_,_,after,[match]) <- ( str =~ "\\A\\&([a-zA-Z]+[a-zA-Z0-9]*)\\$" :: MatchType4 ) 
+   =  TkId GlobalVarId EDllr match : lexer after
+
+   |  (_,_,after,[match]) <- ( str =~ "\\A\\@([a-zA-Z]+[a-zA-Z0-9]*)\\$" :: MatchType4 ) 
+   =  TkId FunPrcId EDllr match : lexer after
+
+   -- Bool Ids local and global
+   |  (_,_,after,[match]) <- ( str =~ "\\A([a-zA-Z]+[a-zA-Z0-9]*)\\?" :: MatchType4 ) 
+   =  TkId LocalVarId EBool match : lexer after
+
+   |  (_,_,after,[match]) <- ( str =~ "\\A\\&([a-zA-Z]+[a-zA-Z0-9]*)\\?" :: MatchType4 ) 
+   =  TkId GlobalVarId EBool match : lexer after
+
+   |  (_,_,after,[match]) <- ( str =~ "\\A\\@([a-zA-Z]+[a-zA-Z0-9]*)\\?" :: MatchType4 ) 
+   =  TkId FunPrcId EBool match : lexer after
+
+
+   -- Scalar Ids local and global
+   |  (_,_,after,[match]) <- ( str =~ "\\A([a-zA-Z]+\\S*)" :: MatchType4 ) 
    =  TkId LocalVarId ESclr match : lexer after
+
+   |  (_,_,after,[match]) <- ( str =~ "\\A\\&([a-zA-Z]+\\S*)" :: MatchType4 ) 
+   =  TkId GlobalVarId ESclr match : lexer after
+
+   |  (_,_,after,[match]) <- ( str =~ "\\A\\@([a-zA-Z]+\\S*)" :: MatchType4 ) 
+   =  TkId FunPrcId ESclr match : lexer after
+
+   -- Error Statt
+   |  (_,_,after,[match]) <- ( str =~ "\\A_([a-zA-Z]+[a-zA-Z0-9]*)" :: MatchType4 ) 
+   =  TkId FunPrcId NADA match : lexer after
+
+
+
 
 
    -- Deal with errors
