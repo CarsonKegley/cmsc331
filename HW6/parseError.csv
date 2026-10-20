@@ -1,0 +1,12 @@
+Parse Stack," Input Stream"," Comment"
+S,( id id * id ) $,Initial Contents
+E $,( id id * id ) $,uses S -> E $
+T Ttl $,( id id * id ) $,use E -> T Ttl," "
+F Ftl Ttl $,( id id * id ) $,use T -> F Ftl
+( E ) Ftl Ttl $,( id id * id ) $,use F -> ( E )
+E ) Ftl Ttl $,id id * id ) $,Match on (
+T Ttl ) Ftl Ttl $,id id * id ) $,use E -> T Ttl
+F Ftl Ttl ) Ftl Ttl $,id id * id ) $,use T -> F Ftl
+id Ftl Ttl ) Ftl Ttl $,id id * id ) $,use F -> id
+Ftl Ttl ) Ftl Ttl $,id * id ) $,match id
+Ftl Ttl ) Ftl Ttl $,id * id ) $,Parse error there is no valid path to parsing the string from this point
